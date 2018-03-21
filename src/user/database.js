@@ -40,6 +40,9 @@ const UserSchema = new mongoose.Schema(
     },
     profile: ProfileSchema,
     status: { type: String, default: 'pending-email' }, // pending-email, active, banned, not-active
+    apps: { type: Array },
+    isPaid: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: false },
   },
   {
     timestamps: {
