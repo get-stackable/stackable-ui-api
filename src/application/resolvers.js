@@ -181,17 +181,17 @@ export default {
       );
     });
 
-    return result;
+    return appCopy;
   },
   addUserApplication: async (root, args, ctx) => {
     if (!ctx.user) {
       throw new Error('Not logged in');
     }
 
-    const { id, userEmail } = args;
+    const { appId, userEmail } = args;
 
     // todo check if user already admin
-    const app = await Application.findOne({ _id: id, users: ctx.user.id });
+    const app = await Application.findOne({ _id: appId, users: ctx.user.id });
 
     // check if current user own this app
     if (!app) {

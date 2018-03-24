@@ -4,7 +4,7 @@ import { isUndefined } from 'underscore';
 import Application from '../application/database';
 import Container from './database';
 import Item from '../item/database';
-import User from '../user/database';
+// import User from '../user/database';
 
 export default {
   Query: {

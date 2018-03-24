@@ -11,6 +11,15 @@ const typeDefs = `
     users: String
   }
 
+  type ApplicationLibrary {
+    id: ID!                # "!" denotes a required field
+    name: String
+    description: String
+    containers: String
+    isOfficial: Boolean
+    isActive: Boolean
+  }
+
   input ApplicationInput {
     name: String!
     description: String
@@ -20,12 +29,19 @@ const typeDefs = `
 
   # This type specifies the entry points into our API. In this case
   type Query {
-    allApplications: [Application]    # returns a array of applications
+    allApplications: [Application]    # returns a array of Applications
+    allApplicationLibraries: [ApplicationLibrary]    # returns a array of ApplicationLibrary
   }
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    updateApplication(input: ApplicationInput): Application
+    createApplication(id: ID!): Application
+    updateApplication(id: ID!, input: ApplicationInput): Application
+    deleteApplication(id: ID!): Application
+    generateKeyApplication(id: ID!): Application
+    cloneApplication(id: ID!): Application
+    addUserApplication(appId: ID!, userEmail: String!): Application
+    removeUserApplication(appId: ID!, userId: ID!): Application
   }
 `;
 

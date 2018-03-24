@@ -40,6 +40,7 @@ const typeDefs = `
   # This type specifies the entry points into our API. In this case
   # there is only one - "me" - which returns a current user.
   type Query {
+    allUsers(ids: [String]): [User] # return array of users
     me: User    # returns a current user
   }
 
@@ -48,6 +49,7 @@ const typeDefs = `
     register(input: RegisterInput): JwtUser
     login(input: LoginInput): JwtUser
     updateMe(input: UpdateInput): User
+    payReferral(key: String!): User
   }
 `;
 

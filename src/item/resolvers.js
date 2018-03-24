@@ -1,5 +1,5 @@
 import Item from './database';
-import User from '../user/database';
+// import User from '../user/database';
 import Application from '../application/database';
 import Container from '../container/database';
 
@@ -122,7 +122,7 @@ export default {
 
       const { id } = args;
 
-      const user = await User.findOne(ctx.user.id);
+      // const user = await User.findOne(ctx.user.id);
       // const Item = user.isPaid ? ItemPaid : ItemFree;
 
       const item = await Item.findOne({ _id: id });
