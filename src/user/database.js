@@ -1,4 +1,4 @@
-import mongoose from 'mongoose-fill';
+import mongoose, { Schema } from 'mongoose-fill';
 import bcrypt from 'bcryptjs';
 import slugify from 'slugify';
 import randomstring from 'randomstring';
@@ -6,21 +6,34 @@ import randomstring from 'randomstring';
 mongoose.Promise = global.Promise;
 
 const ProfileSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    trim: true,
+  firstName: { type: String, trim: true },
+  lastName: { type: String, trim: true },
+  location: { type: String, trim: true },
+  about: { type: String },
+});
+
+const ReferralSchema = new mongoose.Schema({
+  wasReferred: { type: Boolean, default: false },
+  referredBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
-  lastName: {
-    type: String,
-    trim: true,
-  },
+  balance: { type: Number, default: 0 },
+  referrals: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: [],
+    },
+  ],
+  key: { type: String, default: randomstring.generate(5) },
 });
 
 const UserSchema = new mongoose.Schema(
   {
     email: {
       type: String,
-      required: false,
+      required: true,
       index: true,
       lowercase: true,
       trim: true,
@@ -39,10 +52,20 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     profile: ProfileSchema,
-    status: { type: String, default: 'pending-email' }, // pending-email, active, banned, not-active
-    apps: { type: Array },
+    status: { type: String, default: 'pending' }, // pending, active, not-active, banned
     isPaid: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
+    lastLoginAt: { type: Date },
+    authKey: {
+      type: String,
+      index: true,
+      unique: true,
+    },
+    apps: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Applocation' }],
+      default: [],
+    },
+    referral: ReferralSchema,
   },
   {
     timestamps: {

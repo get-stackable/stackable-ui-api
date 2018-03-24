@@ -1,14 +1,22 @@
-import mongoose from 'mongoose-fill';
+import mongoose, { Schema } from 'mongoose-fill';
 
 mongoose.Promise = global.Promise;
 
 const ItemSchema = new mongoose.Schema(
   {
-    containerId: { type: String, required: true },
-    appId: { type: String, required: true },
-    ownerId: { type: String },
-    data: { type: Object, required: true, index: true },
-    publishedAt: { type: Date, default: Date.now },
+    container: {
+      type: Schema.Types.ObjectId,
+      ref: 'Container',
+      required: true,
+    },
+    app: {
+      type: Schema.Types.ObjectId,
+      ref: 'Applocation',
+      required: true,
+    },
+    owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    data: { type: Schema.Types.Mixed, required: true, index: true },
+    tags: { type: [String], default: [] },
   },
   {
     timestamps: {
