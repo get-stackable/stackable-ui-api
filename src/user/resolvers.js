@@ -3,6 +3,12 @@ import User from './database';
 
 export default {
   Query: {
+    allUsers: async (root, args, ctx) => {
+      if (this.userId) {
+        return User.find({ _id: { $in: ids } }, { fields: allowedFields });
+      }
+      this.ready();
+    },
     me: async (root, args, ctx) => {
       if (!ctx.user) {
         throw new Error('Not logged in');
@@ -68,6 +74,50 @@ export default {
       await User.update(objFind, objUpdate);
 
       return User.findOne({ _id: ctx.user.id });
+    },
+    payReferral: async (root, args, ctx) => {
+      const commission = SiteSettings.referralCommission;
+      const currentUser = User.findOne(this.userId);
+
+      // get referrer
+      const referrerUser = User.findOne({ 'referral.key': key });
+
+      // check if current user already got paid for referral signup
+      if (
+        currentUser.referral.wasReferred ||
+        referrerUser._id === currentUser._id
+      ) {
+        throw new Meteor.Error(
+          'not-allowed',
+          'You have already earned your referral payment.',
+        );
+      }
+
+      if (referrerUser.referral.balance >= 100) {
+        throw new Meteor.Error(
+          'not-allowed',
+          'Referrer is not allowed to earn more credits.',
+        );
+      }
+
+      // now pay referrer and current user both
+      referrerUser.push({
+        'referral.referrals': currentUser._id,
+      });
+      referrerUser.inc('referral.balance', commission);
+
+      referrerUser.save();
+
+      // now pay referrer and current user both
+      currentUser.set({
+        'referral.wasReferred': true,
+        'referral.referredBy': referrerUser._id,
+      });
+      currentUser.inc('referral.balance', commission);
+
+      currentUser.save();
+
+      return currentUser;
     },
   },
 };

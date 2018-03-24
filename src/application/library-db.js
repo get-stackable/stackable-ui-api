@@ -13,7 +13,7 @@ const LibraryContainerSchema = new mongoose.Schema({
   items: { type: [ContainerItemSchema], default: [] },
 });
 
-const ApplicationSchema = new mongoose.Schema(
+const ApplicationLibrarySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -35,4 +35,4 @@ const ApplicationSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.model('Applocation', ApplicationSchema);
+export default mongoose.model('ApplicationLibrary', ApplicationLibrarySchema);
