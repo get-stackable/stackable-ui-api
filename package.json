@@ -1,13 +1,13 @@
 {
-  "name": "kickoff-koa2",
+  "name": "stackable-ui-api",
   "version": "2.0.0",
-  "description": "An opinionated boilerplate for koa v2 with batteries included",
+  "description": " Stackable.space UI API",
   "author": "Parminder Klair <perminder.klair@gmail.com>",
   "license": "MIT",
   "main": "bin/server.js",
   "scripts": {
-    "start": "node bin/server",
-    "watch": "nodemon --watch src --inspect --debug bin/server",
+    "start": "node bin/server.js",
+    "watch": "nodemon --watch src --inspect --debug bin/server.js",
     "lint": "eslint --fix --ext .jsx,.js src/*.js src/**/*.js src/**/**/*.js"
   },
   "engines": {
