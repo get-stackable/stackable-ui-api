@@ -62,7 +62,7 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     apps: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Applocation' }],
+      type: [{ type: Schema.Types.ObjectId, ref: 'Application' }],
       default: [],
     },
     referral: ReferralSchema,

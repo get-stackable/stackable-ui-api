@@ -27,7 +27,7 @@ const ContainerSchema = new mongoose.Schema(
   {
     name: { type: String, trim: true, required: true },
     slug: { type: String, unique: true, index: true },
-    app: { type: Schema.Types.ObjectId, ref: 'Applocation', required: true },
+    app: { type: Schema.Types.ObjectId, ref: 'Application', required: true },
     items: [ContainerItemSchema],
     isSingleItem: { type: Boolean, default: false },
   },

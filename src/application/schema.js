@@ -35,7 +35,7 @@ const typeDefs = `
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createApplication(id: ID!): Application
+    createApplication(input: ApplicationInput, libraryId: ID): Application
     updateApplication(id: ID!, input: ApplicationInput): Application
     deleteApplication(id: ID!): Application
     generateKeyApplication(id: ID!): Application

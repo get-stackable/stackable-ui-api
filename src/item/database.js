@@ -11,7 +11,7 @@ const ItemSchema = new mongoose.Schema(
     },
     app: {
       type: Schema.Types.ObjectId,
-      ref: 'Applocation',
+      ref: 'Application',
       required: true,
     },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },

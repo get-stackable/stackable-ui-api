@@ -40,4 +40,4 @@ ApplicationSchema.pre('save', async function (done) { // eslint-disable-line
   return done();
 });
 
-export default mongoose.model('Applocation', ApplicationSchema);
+export default mongoose.model('Application', ApplicationSchema);

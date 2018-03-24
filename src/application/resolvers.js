@@ -40,20 +40,21 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const { libraryId } = args;
+      const { libraryId, input } = args;
 
-      const user = await User.findOne(ctx.user.id);
+      const user = await User.findOne({ _id: ctx.user.id });
 
       const data = {
         users: [ctx.user.id],
         createdBy: ctx.user.id,
+        ...input,
       };
 
       const application = new Application(data);
       await application.save();
 
       // add application to user
-      user.push('apps', application._id);
+      user.apps.push(application._id);
       await user.save();
 
       if (libraryId) {
@@ -62,188 +63,188 @@ export default {
 
       return application;
     },
-  },
-  updateApplication: async (root, args, ctx) => {
-    if (!ctx.user) {
-      throw new Error('Not logged in');
-    }
+    updateApplication: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-    const { id, input } = args;
+      const { id, input } = args;
 
-    const app = await Application.findOne({ _id: id, users: ctx.user.id });
+      const app = await Application.findOne({ _id: id, users: ctx.user.id });
 
-    // check if current user own this app
-    if (!app) {
-      throw new Error('You are not allowed to manage this app.');
-    }
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
 
-    app.set(input);
-    await app.save();
-    return app;
-  },
-  deleteApplication: async (root, args, ctx) => {
-    if (!ctx.user) {
-      throw new Error('Not logged in');
-    }
+      app.set(input);
+      await app.save();
+      return app;
+    },
+    deleteApplication: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-    const { id } = args;
-    const app = await Application.findOne({ _id: id, users: ctx.user.id });
+      const { id } = args;
+      const app = await Application.findOne({ _id: id, users: ctx.user.id });
 
-    // check if current user own this app
-    if (!app) {
-      throw new Error('You are not allowed to manage this app.');
-    }
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
 
-    // remove all related containers
-    await Container.remove({ app: app._id });
+      // remove all related containers
+      await Container.remove({ app: app._id });
 
-    // remove all related items
-    Item.remove({ app: app._id });
-    // ItemPaid.remove({ appId: app._id });
-    // ItemFree.remove({ appId: app._id });
+      // remove all related items
+      Item.remove({ app: app._id });
+      // ItemPaid.remove({ appId: app._id });
+      // ItemFree.remove({ appId: app._id });
 
-    await app.remove();
-    return app;
-  },
-  generateKeyApplication: async (root, args, ctx) => {
-    if (!ctx.user) {
-      throw new Error('Not logged in');
-    }
+      await app.remove();
+      return app;
+    },
+    generateKeyApplication: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-    const { id } = args;
+      const { id } = args;
 
-    const app = await Application.findOne({ _id: id, users: ctx.user.id });
+      const app = await Application.findOne({ _id: id, users: ctx.user.id });
 
-    // check if current user own this app
-    if (!app) {
-      throw new Error('You are not allowed to manage this app.');
-    }
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
 
-    app.set({
-      publicKey: randomstring.generate(12),
-      privateKey: randomstring.generate(12),
-    });
+      app.set({
+        publicKey: randomstring.generate(12),
+        privateKey: randomstring.generate(12),
+      });
 
-    await app.save();
-    return app;
-  },
-  cloneApplication: async (root, args, ctx) => {
-    if (!ctx.user) {
-      throw new Error('Not logged in');
-    }
+      await app.save();
+      return app;
+    },
+    cloneApplication: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-    const { id } = args;
+      const { id } = args;
 
-    const app = await Application.findOne({ _id: id, users: ctx.user.id });
+      const app = await Application.findOne({ _id: id, users: ctx.user.id });
 
-    // check if current user own this app
-    if (!app) {
-      throw new Error('You are not allowed to manage this app.');
-    }
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
 
-    // clone app
-    const data = {
-      name: args.name,
-      description: args.description,
-      users: [ctx.user.id],
-      createdBy: ctx.user.id,
-    };
+      // clone app
+      const data = {
+        name: args.name,
+        description: args.description,
+        users: [ctx.user.id],
+        createdBy: ctx.user.id,
+      };
 
-    const appCopy = new Application(data);
-    await appCopy.save();
+      const appCopy = new Application(data);
+      await appCopy.save();
 
-    // clone containers
-    const containers = await Container.find({ appId: app._id });
-    const result = await new Promise((resolve, reject) => {
-      async.each(
-        containers,
-        async (container, callback) => {
-          // Perform operation on container here.
-          // console.log(`Processing file ${container}`);
+      // clone containers
+      const containers = await Container.find({ appId: app._id });
+      await new Promise((resolve, reject) => {
+        async.each(
+          containers,
+          async (container, callback) => {
+            // Perform operation on container here.
+            // console.log(`Processing file ${container}`);
 
-          const dataContainer = {
-            name: container.name,
-            app: appCopy._id,
-            items: container.items,
-          };
-          const newContainer = new Container(dataContainer);
-          await newContainer.save();
+            const dataContainer = {
+              name: container.name,
+              app: appCopy._id,
+              items: container.items,
+            };
+            const newContainer = new Container(dataContainer);
+            await newContainer.save();
 
-          callback();
-        },
-        err => {
-          if (err) {
-            reject(new Error('Container library failed to process'));
-          } else {
-            resolve('All items have been processed successfully');
-          }
-        },
-      );
-    });
+            callback();
+          },
+          err => {
+            if (err) {
+              reject(new Error('Container library failed to process'));
+            } else {
+              resolve('All items have been processed successfully');
+            }
+          },
+        );
+      });
 
-    return appCopy;
-  },
-  addUserApplication: async (root, args, ctx) => {
-    if (!ctx.user) {
-      throw new Error('Not logged in');
-    }
+      return appCopy;
+    },
+    addUserApplication: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-    const { appId, userEmail } = args;
+      const { appId, userEmail } = args;
 
-    // todo check if user already admin
-    const app = await Application.findOne({ _id: appId, users: ctx.user.id });
+      // todo check if user already admin
+      const app = await Application.findOne({ _id: appId, users: ctx.user.id });
 
-    // check if current user own this app
-    if (!app) {
-      throw new Error('You are not allowed to manage this app.');
-    }
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
 
-    const user = await User.findOne({ email: userEmail });
+      const user = await User.findOne({ email: userEmail });
 
-    // if user not found
-    // todo invite user to site
-    if (!user) {
-      throw new Error('User not found, make sure user is registered.');
-    }
+      // if user not found
+      // todo invite user to site
+      if (!user) {
+        throw new Error('User not found, make sure user is registered.');
+      }
 
-    // add domain to user
-    user.push('apps', app._id);
-    await user.save();
+      // add domain to user
+      user.push('apps', app._id);
+      await user.save();
 
-    // add user id to app
-    app.push('users', user._id);
-    await app.save();
+      // add user id to app
+      app.push('users', user._id);
+      await app.save();
 
-    return app;
-  },
-  removeUserApplication: async (root, args, ctx) => {
-    if (!ctx.user) {
-      throw new Error('Not logged in');
-    }
+      return app;
+    },
+    removeUserApplication: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-    const { appId, userId } = args;
+      const { appId, userId } = args;
 
-    const app = await Application.findOne({ _id: appId, users: ctx.user.id });
-    const user = await User.findOne({ _id: userId });
+      const app = await Application.findOne({ _id: appId, users: ctx.user.id });
+      const user = await User.findOne({ _id: userId });
 
-    // check if current user own this app
-    if (!app) {
-      throw new Error('You are not allowed to manage this app.');
-    }
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
 
-    // stack owner cannot be deleted
-    if (user._id === app.createdBy) {
-      throw new Error('You cannot remove owner of the app.');
-    }
+      // stack owner cannot be deleted
+      if (user._id === app.createdBy) {
+        throw new Error('You cannot remove owner of the app.');
+      }
 
-    // remove domain from user
-    user.pull('apps', app._id);
-    await user.save();
+      // remove domain from user
+      user.pull('apps', app._id);
+      await user.save();
 
-    // remove user id from domain
-    app.pull('users', user._id);
-    await app.save();
+      // remove user id from domain
+      app.pull('users', user._id);
+      await app.save();
 
-    return app;
+      return app;
+    },
   },
 };

@@ -23,7 +23,7 @@ export default {
   },
   Mutation: {
     register: async (root, args) => {
-      const { email, password, firstName, lastName } = args;
+      const { email, password, firstName, lastName } = args.input;
       let user = await User.findOne({ email: email.toLowerCase() });
 
       if (user) {
@@ -42,12 +42,14 @@ export default {
       return { user, jwt: token };
     },
     login: async (root, args) => {
-      const user = await User.findOne({ email: args.email });
+      const { email, password } = args.input;
+
+      const user = await User.findOne({ email });
 
       if (!user) {
         throw new Error('Invalid username or password.');
       }
-      const isPasswordValid = await user.comparePassword(args.password);
+      const isPasswordValid = await user.comparePassword(password);
       if (!isPasswordValid) {
         throw new Error('Invalid username or password.');
       }
