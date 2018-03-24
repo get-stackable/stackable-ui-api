@@ -22,7 +22,7 @@ const typeDefs = `
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createItem(ItemInput): Item
+    createItem(input: ItemInput): Item
     updateItem(id: ID!, input: ItemInput): Item
     deleteItem(id: ID!): Item
   }

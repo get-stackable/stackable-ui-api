@@ -7,7 +7,7 @@ const typeDefs = `
   }
 
   input ContainerInput {
-    name: String!
+    appId: ID!
   }
 
   # This type specifies the entry points into our API. In this case
@@ -18,7 +18,7 @@ const typeDefs = `
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createContainer(ContainerInput): Container
+    createContainer(input: ContainerInput): Container
     updateContainer(id: ID!, input: ContainerInput): Container
     deleteContainer(id: ID!): Container
     fieldArchiveContainer(containerId: ID!, fieldName: String!): String

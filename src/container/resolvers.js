@@ -80,7 +80,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const { appId } = args;
+      const { appId } = args.input;
 
       const app = await Application.findOne({ _id: appId, users: ctx.user.id });
       // check if current user own this app

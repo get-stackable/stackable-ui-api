@@ -36,7 +36,7 @@ const ApplicationLibrarySchema = new mongoose.Schema(
   },
 );
 
-ApplicationLibrary.statics.createLibraryData = async function (applicationId, libraryId) { // eslint-disable-line
+ApplicationLibrarySchema.statics.createLibraryData = async function (applicationId, libraryId) { // eslint-disable-line
   const library = await this.findOne(libraryId);
 
   const result = await new Promise((resolve, reject) => {
