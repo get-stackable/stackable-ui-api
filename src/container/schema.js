@@ -7,19 +7,19 @@ const typeDefs = `
   }
 
   input ContainerInput {
-    appId: ID!
+    name: String!
   }
 
   # This type specifies the entry points into our API. In this case
   type Query {
-    allContainers: [Container]    # returns a array of Container
+    allContainers(appId: ID!): [Container]    # returns a array of Container
     container(id: ID!): Container    # returns a object of Container
   }
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createContainer(input: ContainerInput): Container
-    updateContainer(id: ID!, input: ContainerInput): Container
+    createContainer(appId: ID!, input: ContainerInput!): Container
+    updateContainer(id: ID!, input: ContainerInput!): Container
     deleteContainer(id: ID!): Container
     fieldArchiveContainer(containerId: ID!, fieldName: String!): String
     fieldRenameContainer(containerId: ID!, newName: String!, oldName: String!): String

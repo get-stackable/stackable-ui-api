@@ -66,7 +66,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const { appId, containerId, data } = args.input;
+      const { appId, containerId, input } = args;
 
       const app = await Application.findOne({ _id: appId, users: ctx.user.id });
       // check only app owners can get data
@@ -81,9 +81,9 @@ export default {
 
       const newDta = {
         container: container._id,
-        data,
         app: app._id,
         owner: ctx.user.id,
+        data: JSON.parse(input),
       };
       const item = new Item(newDta);
       await item.save();
@@ -110,7 +110,7 @@ export default {
 
       // todo quick fix
       // const ItemDirect = user.isPaid ? ItemsPaid : ItemsFree;
-      item.set(input);
+      item.set(JSON.parse(input));
       await item.save();
 
       return item;

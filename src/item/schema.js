@@ -8,22 +8,16 @@ const typeDefs = `
     publishedAt: String
   }
 
-  input ItemInput {
-    containerId: String!
-    appId: String!
-    data: String!
-  }
-
   # This type specifies the entry points into our API. In this case
   type Query {
-    allItems: [Item]    # returns a array of Item
+    allItems(containerId: ID!, appId: ID!): [Item]    # returns a array of Item
     item(id: ID!): Item    # returns a object of Item
   }
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createItem(input: ItemInput): Item
-    updateItem(id: ID!, input: ItemInput): Item
+    createItem(containerId: ID!, appId: ID!, input: String!): Item
+    updateItem(id: ID!, input: String!): Item
     deleteItem(id: ID!): Item
   }
 `;

@@ -26,7 +26,7 @@ export default {
         throw new Error('You are not allowed to manage this app.');
       }
 
-      const conatiners = await Container.find({ appId: app._id }).sort({
+      const conatiners = await Container.find({ app: app._id }).sort({
         createdAt: -1,
       });
 
@@ -80,7 +80,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const { appId } = args.input;
+      const { appId, input } = args;
 
       const app = await Application.findOne({ _id: appId, users: ctx.user.id });
       // check if current user own this app
@@ -91,14 +91,16 @@ export default {
       // check if container with same name already exists
       const checkContainer = await Container.findOne({
         app: appId,
-        name: args.name,
+        name: input.name,
       });
-
       if (checkContainer) {
         throw new Error('Container with same name already exists.');
       }
 
-      const container = new Container(args);
+      const container = new Container({
+        app: appId,
+        ...input,
+      });
       await container.save();
 
       return container;
@@ -110,7 +112,7 @@ export default {
 
       const { id, input } = args;
 
-      const container = await Container.findOne(id);
+      const container = await Container.findOne({ _id: id });
 
       // check if current user own this domain
       const app = Application.findOne({
@@ -139,7 +141,7 @@ export default {
 
       // check if current user own this app
       const app = await Application.findOne({
-        _id: container.appId,
+        _id: container.app,
         users: ctx.user.id,
       });
 

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose-fill';
 import slugify from 'slugify';
+import { capitalize } from 'underscore.string';
 
 mongoose.Promise = global.Promise;
 
@@ -43,6 +44,7 @@ ContainerSchema.pre('save', async function(done) { // eslint-disable-line
   // slugify slug on update
   if (this.isModified('name')) {
     this.slug = slugify(this.name);
+    this.name = capitalize(this.name);
   }
 
   return done();

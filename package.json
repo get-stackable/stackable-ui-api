@@ -49,7 +49,8 @@
     "nodemailer": "^4.6.2",
     "randomstring": "^1.1.5",
     "slugify": "^1.2.9",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4"
   },
   "devDependencies": {
     "babel-runtime": "^6.26.0",

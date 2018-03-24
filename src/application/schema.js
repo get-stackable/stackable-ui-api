@@ -29,14 +29,15 @@ const typeDefs = `
 
   # This type specifies the entry points into our API. In this case
   type Query {
-    allApplications: [Application]    # returns a array of Applications
+    application: Application    # returns a object of Application
+    allApplications: [Application]    # returns a array of Application
     allApplicationLibraries: [ApplicationLibrary]    # returns a array of ApplicationLibrary
   }
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createApplication(input: ApplicationInput, libraryId: ID): Application
-    updateApplication(id: ID!, input: ApplicationInput): Application
+    createApplication(input: ApplicationInput!, libraryId: ID): Application
+    updateApplication(id: ID!, input: ApplicationInput!): Application
     deleteApplication(id: ID!): Application
     generateKeyApplication(id: ID!): Application
     cloneApplication(id: ID!): Application

@@ -33,6 +33,16 @@ export default {
 
       return appLibraries;
     },
+    application: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
+
+      const { id } = args;
+
+      const app = await Application.findOne({ _id: id, users: ctx.user.id });
+      return app;
+    },
   },
   Mutation: {
     createApplication: async (root, args, ctx) => {

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose-fill';
 import randomstring from 'randomstring';
+import { capitalize } from 'underscore.string';
 
 mongoose.Promise = global.Promise;
 
@@ -28,6 +29,10 @@ const ApplicationSchema = new mongoose.Schema(
 );
 
 ApplicationSchema.pre('save', async function (done) { // eslint-disable-line
+  if (this.isModified('name')) {
+    this.name = capitalize(this.name);
+  }
+
   if (this.isNew) {
     try {
       this.publicKey = randomstring.generate(12);
