@@ -83,7 +83,7 @@ export default {
         container: container._id,
         app: app._id,
         owner: ctx.user.id,
-        data: JSON.parse(input),
+        data: input,
       };
       const item = new Item(newDta);
       await item.save();
@@ -110,7 +110,8 @@ export default {
 
       // todo quick fix
       // const ItemDirect = user.isPaid ? ItemsPaid : ItemsFree;
-      item.set(JSON.parse(input));
+      // item.set(JSON.parse(input));
+      item.set({ data: input });
       await item.save();
 
       return item;

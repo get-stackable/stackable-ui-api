@@ -1,5 +1,6 @@
 import { makeExecutableSchema } from 'graphql-tools';
 import { mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
+import GraphQLJSON from 'graphql-type-json';
 
 import MainSchema from './main/schema';
 import MainResolvers from './main/resolvers';
@@ -12,6 +13,10 @@ import ContainerResolvers from './container/resolvers';
 import ItemSchema from './item/schema';
 import ItemResolvers from './item/resolvers';
 
+const resolveFunctions = {
+  JSON: GraphQLJSON,
+};
+
 export default makeExecutableSchema({
   typeDefs: mergeTypes([
     MainSchema,
@@ -21,6 +26,7 @@ export default makeExecutableSchema({
     ItemSchema,
   ]),
   resolvers: mergeResolvers([
+    resolveFunctions,
     MainResolvers,
     UserResolvers,
     ApplicationResolvers,

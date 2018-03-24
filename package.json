@@ -26,6 +26,7 @@
     "dotenv": "^5.0.1",
     "graphql": "^0.13.1",
     "graphql-tools": "^2.21.0",
+    "graphql-type-json": "^0.2.0",
     "html-template-tag": "^2.0.0",
     "jsonwebtoken": "^8.2.0",
     "koa": "^2.5.0",
