@@ -27,7 +27,7 @@ const conf = convict({
   mongodb: {
     doc: 'URL to mongodb.',
     format: String,
-    default: 'mongodb://test:test12@159.89.197.227:27017/test',
+    default: '',
     env: 'MONGODB',
   },
   jwtSecret: {
