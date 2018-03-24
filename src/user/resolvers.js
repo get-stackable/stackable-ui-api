@@ -18,7 +18,7 @@ export default {
   },
   Mutation: {
     register: async (root, args) => {
-      const { email, password, firstName, lastName } = args.input;
+      const { email, password, firstName, lastName } = args;
       let user = await User.findOne({ email: email.toLowerCase() });
 
       if (user) {
@@ -37,12 +37,12 @@ export default {
       return { user, jwt: token };
     },
     login: async (root, args) => {
-      const user = await User.findOne({ email: args.input.email });
+      const user = await User.findOne({ email: args.email });
 
       if (!user) {
         throw new Error('Invalid username or password.');
       }
-      const isPasswordValid = await user.comparePassword(args.input.password);
+      const isPasswordValid = await user.comparePassword(args.password);
       if (!isPasswordValid) {
         throw new Error('Invalid username or password.');
       }
@@ -59,14 +59,14 @@ export default {
       const objFind = { _id: ctx.user.id };
 
       // update profile
-      if (args.input.email) {
-        objUpdate.email = args.input.email;
+      if (args.email) {
+        objUpdate.email = args.email;
       }
-      if (args.input.firstName) {
-        objUpdate['profile.firstName'] = args.input.profile.firstName;
+      if (args.firstName) {
+        objUpdate['profile.firstName'] = args.profile.firstName;
       }
-      if (args.input.lastName) {
-        objUpdate['profile.lastName'] = args.input.profile.lastName;
+      if (args.lastName) {
+        objUpdate['profile.lastName'] = args.profile.lastName;
       }
 
       // console.log('objUpdate', objUpdate);

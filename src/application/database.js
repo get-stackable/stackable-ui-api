@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose-fill';
+import randomstring from 'randomstring';
 
 mongoose.Promise = global.Promise;
 
@@ -25,5 +26,18 @@ const ApplicationSchema = new mongoose.Schema(
     },
   },
 );
+
+ApplicationSchema.pre('save', async function (done) { // eslint-disable-line
+  if (this.isNew) {
+    try {
+      this.publicKey = randomstring.generate(12);
+      this.privateKey = randomstring.generate(12);
+    } catch (err) {
+      return done(err);
+    }
+  }
+
+  return done();
+});
 
 export default mongoose.model('Applocation', ApplicationSchema);

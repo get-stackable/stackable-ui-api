@@ -1,4 +1,5 @@
 import mongoose from 'mongoose-fill';
+import async from 'async';
 
 import { ContainerItemSchema } from '../container/database';
 
@@ -34,5 +35,39 @@ const ApplicationLibrarySchema = new mongoose.Schema(
     },
   },
 );
+
+ApplicationLibrary.statics.createLibraryData = async function (applicationId, libraryId) { // eslint-disable-line
+  const library = await this.findOne(libraryId);
+
+  const result = await new Promise((resolve, reject) => {
+    async.each(
+      library.containers,
+      (container, callback) => {
+        // Perform operation on container here.
+        // console.log(`Processing file ${container}`);
+
+        const data = {
+          name: container.name,
+          app: applicationId,
+          items: container.items,
+        };
+
+        // TODO:
+        // Meteor.call('container.create', data);
+
+        callback();
+      },
+      err => {
+        if (err) {
+          reject(new Error('Container library failed to process'));
+        } else {
+          resolve('All items have been processed successfully');
+        }
+      },
+    );
+  });
+
+  return result;
+};
 
 export default mongoose.model('ApplicationLibrary', ApplicationLibrarySchema);
