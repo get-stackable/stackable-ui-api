@@ -1,13 +1,18 @@
 import { generateToken } from '../utils/auth';
 import User from './database';
+import config from '../utils/config';
 
 export default {
   Query: {
     allUsers: async (root, args, ctx) => {
-      if (this.userId) {
-        return User.find({ _id: { $in: ids } }, { fields: allowedFields });
+      if (!ctx.user) {
+        throw new Error('Not logged in');
       }
-      this.ready();
+
+      const { ids } = args;
+
+      const users = await User.find({ _id: { $in: ids } });
+      return users;
     },
     me: async (root, args, ctx) => {
       if (!ctx.user) {
@@ -76,28 +81,28 @@ export default {
       return User.findOne({ _id: ctx.user.id });
     },
     payReferral: async (root, args, ctx) => {
-      const commission = SiteSettings.referralCommission;
-      const currentUser = User.findOne(this.userId);
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
+
+      const { key } = args;
+
+      const commission = config.get('referralCommission');
+      const currentUser = await User.findOne(ctx.user.id);
 
       // get referrer
-      const referrerUser = User.findOne({ 'referral.key': key });
+      const referrerUser = await User.findOne({ 'referral.key': key });
 
       // check if current user already got paid for referral signup
       if (
         currentUser.referral.wasReferred ||
         referrerUser._id === currentUser._id
       ) {
-        throw new Meteor.Error(
-          'not-allowed',
-          'You have already earned your referral payment.',
-        );
+        throw new Error('You have already earned your referral payment.');
       }
 
       if (referrerUser.referral.balance >= 100) {
-        throw new Meteor.Error(
-          'not-allowed',
-          'Referrer is not allowed to earn more credits.',
-        );
+        throw new Error('Referrer is not allowed to earn more credits.');
       }
 
       // now pay referrer and current user both
@@ -105,8 +110,7 @@ export default {
         'referral.referrals': currentUser._id,
       });
       referrerUser.inc('referral.balance', commission);
-
-      referrerUser.save();
+      await referrerUser.save();
 
       // now pay referrer and current user both
       currentUser.set({
@@ -114,8 +118,7 @@ export default {
         'referral.referredBy': referrerUser._id,
       });
       currentUser.inc('referral.balance', commission);
-
-      currentUser.save();
+      await currentUser.save();
 
       return currentUser;
     },

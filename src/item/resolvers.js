@@ -1,142 +1,144 @@
+import Item from './database';
+import User from '../user/database';
+import Application from '../application/database';
+import Container from '../container/database';
+
 export default {
   Query: {
     allItems: async (root, args, ctx) => {
       if (!ctx.user) {
         throw new Error('Not logged in');
       }
-      check(appId, String);
+
+      const { containerId, appId } = args;
       const itemFind = {};
-      const options = { sort: { createdAt: -1 } };
 
-      const user = User.findOne(this.userId);
-      const Item = user.isPaid ? ItemPaid : ItemFree;
+      // const user = await User.findOne(ctx.user.id);
+      // const Item = user.isPaid ? ItemPaid : ItemFree;
 
-      if (!_.isUndefined(containerId)) {
-        check(containerId, String);
-        itemFind.containerId = containerId;
+      if (!containerId) {
+        throw new Error('Container not provided');
       }
 
-      // check only app owners can get data
-      const app = Application.findOne({ _id: appId, users: this.userId });
-      itemFind.appId = app._id;
+      itemFind.container = containerId;
 
-      if (this.userId && app) {
-        return Item.find(itemFind, options);
+      const app = await Application.findOne({ _id: appId, users: ctx.user.id });
+
+      // check if current user own this app
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
       }
-      this.ready();
+
+      const items = await Item.find(itemFind).sort({
+        createdAt: -1,
+      });
+
+      return items;
     },
     item: async (root, args, ctx) => {
-      const oid = new Meteor.Collection.ObjectID(id);
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
 
-      const user = User.findOne(this.userId);
-      const Item = user.isPaid ? ItemPaid : ItemFree;
+      const { id } = args;
 
-      const item = Item.findOne({ _id: oid });
-      const app = Application.findOne({ _id: item.appId, users: this.userId });
+      // const user = User.findOne(this.userId);
+      // const Item = user.isPaid ? ItemPaid : ItemFree;
+
+      const item = await Item.findOne({ _id: id });
+      const app = await Application.findOne({
+        _id: item.app,
+        users: ctx.user.id,
+      });
 
       // check only app owners can get data
-      if (this.userId && app) {
-        return [
-          Container.find({ _id: item.containerId }),
-          Item.find({ _id: item._id }),
-        ];
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
       }
-      this.ready();
+
+      const items = await Item.find({ _id: item._id });
+      return items;
     },
   },
   Mutation: {
-    createItem: async () => {
-      if (_.isNull(this.userId)) {
-        // if not logged in
-        throw new Meteor.Error('not-logged-in', 'Please login to continue.');
+    createItem: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
       }
 
-      // check if current user own this app
-      const app = Application.findOne({ _id: doc.appId, users: this.userId });
-      if (_.isUndefined(app)) {
-        throw new Meteor.Error(
-          'not-allowed',
-          'You are not allowed to manage this app.',
-        );
+      const { appId, containerId, data } = args;
+
+      const app = await Application.findOne({ _id: appId, users: ctx.user.id });
+      // check only app owners can get data
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
       }
 
-      const user = User.findOne(this.userId);
-      const container = Container.findOne({ _id: doc.containerId });
+      // const user = await User.findOne(ctx.user.id);
+      const container = await Container.findOne({ _id: containerId });
 
-      const Item = user.isPaid ? ItemPaid : ItemFree;
+      // const Item = user.isPaid ? ItemPaid : ItemFree;
 
-      const item = new Item();
-      item.set({
-        container: container.slug,
-        containerId: container._id,
-        data: doc.data,
-        appId: app._id,
-        ownerId: this.userId,
-      });
-
-      item.validate();
-
-      if (item.hasValidationErrors()) {
-        item.throwValidationException();
-      } else {
-        item.save();
-        return item;
-      }
-    },
-    updateItem: async () => {
-      // check(id, String);
-      if (_.isUndefined(id._str)) {
-        id = new Meteor.Collection.ObjectID(id);
-      }
-
-      if (_.isNull(this.userId)) {
-        // if not logged in
-        throw new Meteor.Error('not-logged-in', 'Please login to continue.');
-      }
-
-      const user = User.findOne(this.userId);
-      const Item = user.isPaid ? ItemPaid : ItemFree;
-
-      const item = Item.findOne({ _id: id });
-
-      // check if current user own this app
-      const app = Application.findOne({ _id: item.appId, users: this.userId });
-      if (_.isUndefined(app)) {
-        throw new Meteor.Error(
-          'not-allowed',
-          'You are not allowed to manage this app.',
-        );
-      }
-
-      // todo quick fix
-      const ItemDirect = user.isPaid ? ItemsPaid : ItemsFree;
-      ItemDirect.update({ _id: id }, { $set: { data } });
+      const newDta = {
+        container: container._id,
+        data,
+        app: app._id,
+        owner: ctx.user.id,
+      };
+      const item = new Item(newDta);
+      await item.save();
 
       return item;
     },
-    deleteItem: async () => {
-      // check(docId, String);
-      if (_.isUndefined(id._str)) {
-        id = new Meteor.Collection.ObjectID(id);
+    updateItem: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
       }
 
-      const user = User.findOne(this.userId);
-      const Item = user.isPaid ? ItemPaid : ItemFree;
+      const { id, input } = args;
 
-      const item = Item.findOne({ _id: id });
+      // const user = await User.findOne(ctx.user.id);
+      // const Item = user.isPaid ? ItemPaid : ItemFree;
 
-      // check if current user own this app
-      const app = Application.findOne({ _id: item.appId, users: this.userId });
-      if (_.isUndefined(app)) {
-        throw new Meteor.Error(
-          'not-allowed',
-          'You are not allowed to manage this app.',
-        );
+      const item = await Item.findOne({ _id: id });
+
+      const app = Application.findOne({ _id: item.app, users: ctx.user.id });
+      // check only app owners can get data
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
       }
 
       // todo quick fix
-      const ItemDirect = user.isPaid ? ItemsPaid : ItemsFree;
-      ItemDirect.remove({ _id: id });
+      // const ItemDirect = user.isPaid ? ItemsPaid : ItemsFree;
+      item.set(input);
+      await item.save();
+
+      return item;
+    },
+    deleteItem: async (root, args, ctx) => {
+      if (!ctx.user) {
+        throw new Error('Not logged in');
+      }
+
+      const { id } = args;
+
+      const user = await User.findOne(ctx.user.id);
+      // const Item = user.isPaid ? ItemPaid : ItemFree;
+
+      const item = await Item.findOne({ _id: id });
+
+      const app = await Application.findOne({
+        _id: item.app,
+        users: ctx.user.id,
+      });
+      // check only app owners can get data
+      if (!app) {
+        throw new Error('You are not allowed to manage this app.');
+      }
+
+      // todo quick fix
+      // const ItemDirect = user.isPaid ? ItemsPaid : ItemsFree;
+      await Item.remove({ _id: id });
 
       return item;
     },

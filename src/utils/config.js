@@ -65,6 +65,11 @@ const conf = convict({
       default: '',
     },
   },
+  referralCommission: {
+    doc: 'Referral Commission',
+    format: Number,
+    default: 5,
+  },
 });
 
 const env = conf.get('env');
