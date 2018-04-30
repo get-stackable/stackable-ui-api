@@ -29,7 +29,7 @@ const typeDefs = `
 
   # This type specifies the entry points into our API. In this case
   type Query {
-    application: Application    # returns a object of Application
+    application(id: ID! ): Application    # returns a object of Application
     allApplications: [Application]    # returns a array of Application
     allApplicationLibraries: [ApplicationLibrary]    # returns a array of ApplicationLibrary
   }

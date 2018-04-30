@@ -59,7 +59,7 @@ export default {
         createdBy: ctx.user.id,
         ...input,
       };
-
+      console.log(data);
       const application = new Application(data);
       await application.save();
 

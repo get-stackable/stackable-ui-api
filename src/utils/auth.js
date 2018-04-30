@@ -2,8 +2,20 @@ import jwt from 'jsonwebtoken';
 
 import conf from './config';
 
+const isDev = conf.get('env') === 'development';
+
 export const isAuthenticated = async (ctx, next) => {
   ctx.user = null;
+  // turn on auth for dev
+  if (isDev) {
+    ctx.user = {
+      id: '5ac3020c32731d0049176df6',
+      email: 'admin@admin.com',
+      isAdmin: true,
+    };
+    return next();
+  }
+
   if (!ctx.header.authorization) {
     return next();
   }
