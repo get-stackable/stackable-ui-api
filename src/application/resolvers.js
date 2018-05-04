@@ -153,11 +153,13 @@ export default {
 
       // clone app
       const data = {
-        name: args.name,
-        description: args.description,
+        name: args.input.name,
+        description: args.input.description,
         users: [ctx.user.id],
         createdBy: ctx.user.id,
       };
+
+      console.log(args);
 
       const appCopy = new Application(data);
       await appCopy.save();
