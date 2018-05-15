@@ -3,11 +3,36 @@ const typeDefs = `
     id: ID!                # "!" denotes a required field
     name: String
     appId: String
+    slug: String
+    fields: [ContainerField]
+    isSingleItem: Boolean
     publishedAt: String
+  }
+
+  type ContainerField{
+    id: ID!
+    name: String
+    slug: String
+    description: String  # TODO: Validation And Relation
+    type: String
+    isRequired: Boolean
+    isDisabled: Boolean
+    listingOrder: Int
+  }
+
+  input ContainerFieldInput {
+    name: String
+    slug: String
+    description: String  # TODO: Validation And Relation
+    type: String
+    isRequired: Boolean
+    isDisabled: Boolean
+    listingOrder: Int
   }
 
   input ContainerInput {
     name: String!
+    fields: [ContainerField]
   }
 
   # This type specifies the entry points into our API. In this case
