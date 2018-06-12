@@ -21,10 +21,10 @@ const typeDefs = `
   }
 
   input ContainerFieldInput {
-    name: String
+    name: String!
     slug: String
     description: String  # TODO: Validation And Relation
-    type: String
+    type: String!
     isRequired: Boolean
     isDisabled: Boolean
     listingOrder: Int
@@ -32,7 +32,11 @@ const typeDefs = `
 
   input ContainerInput {
     name: String!
-    fields: [ContainerField]
+    fields: [ContainerFieldInput]
+  }
+
+  input ContainerName {
+    name: String!
   }
 
   # This type specifies the entry points into our API. In this case
@@ -43,8 +47,8 @@ const typeDefs = `
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createContainer(appId: ID!, input: ContainerInput!): Container
-    updateContainer(id: ID!, input: ContainerInput!): Container
+    createContainer(appId: ID!, input: ContainerName ): Container
+    updateContainer(id: ID!, input: ContainerInput ): Container
     deleteContainer(id: ID!): Container
     fieldArchiveContainer(containerId: ID!, fieldName: String!): String
     fieldRenameContainer(containerId: ID!, newName: String!, oldName: String!): String

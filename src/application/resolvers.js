@@ -255,7 +255,6 @@ export default {
       // remove user id from domain
       app.pull('users', user._id);
       await app.save();
-
       return app;
     },
   },
