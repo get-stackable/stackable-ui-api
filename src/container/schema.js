@@ -16,18 +16,32 @@ const typeDefs = `
     description: String  # TODO: Validation And Relation
     type: String
     isRequired: Boolean
+    validation:Validation
     isDisabled: Boolean
     listingOrder: Int
   }
 
+  type Validation{
+    between: Int
+    min: Int
+    max: Int
+  }
+
   input ContainerFieldInput {
-    name: String!
+    name: String
     slug: String
     description: String  # TODO: Validation And Relation
-    type: String!
+    type: String
     isRequired: Boolean
     isDisabled: Boolean
+    validation:ValidationInput
     listingOrder: Int
+  }
+
+  input ValidationInput {
+    between: Int
+    min: Int
+    max: Int
   }
 
   input ContainerInput {
@@ -47,7 +61,7 @@ const typeDefs = `
 
   # The mutation root type, used to define all mutations.
   type Mutation {
-    createContainer(appId: ID!, input: ContainerName ): Container
+    createContainer(appId: ID!, input: ContainerInput ): Container
     updateContainer(id: ID!, input: ContainerInput ): Container
     deleteContainer(id: ID!): Container
     fieldArchiveContainer(containerId: ID!, fieldName: String!): String
