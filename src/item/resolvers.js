@@ -10,7 +10,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const {  containerId, appId  } = args;
+      const { containerId, appId } = args;
       const itemFind = {};
 
       // const user = await User.findOne(ctx.user.id);
@@ -40,7 +40,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const {  id  } = args;
+      const { id } = args;
 
       // const user = User.findOne(this.userId);
       // const Item = user.isPaid ? ItemPaid : ItemFree;
@@ -66,7 +66,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const {  appId, containerId, input  } = args;
+      const { appId, containerId, input } = args;
 
       const app = await Application.findOne({ _id: appId, users: ctx.user.id });
       // check only app owners can get data
@@ -95,7 +95,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const {  id, input  } = args;
+      const { id, input } = args;
 
       // const user = await User.findOne(ctx.user.id);
       // const Item = user.isPaid ? ItemPaid : ItemFree;
@@ -121,7 +121,7 @@ export default {
         throw new Error('Not logged in');
       }
 
-      const {  id  } = args;
+      const { id } = args;
 
       // const user = await User.findOne(ctx.user.id);
       // const Item = user.isPaid ? ItemPaid : ItemFree;
