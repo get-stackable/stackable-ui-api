@@ -16,10 +16,10 @@ export const landing = ctx => {
   ctx.body = html`<!DOCTYPE html>
     <html>
     <head>
-        <title>API</title>
+        <title>Stackable API</title>
     </head>
     <body>
-        <h1>Welcome to API!</h1>
+        <h1>Welcome to Stackable UI API.</h1>
     </body>
     </html>`;
 };
