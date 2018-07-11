@@ -43,7 +43,7 @@ app.use(
   jsonError({
     // Avoid showing the stacktrace in 'production' env
     // eslint-disable-next-line
-    postFormat: (e, obj) => process.env.NODE_ENV === 'production' ? omit(obj, 'stack') : obj
+    postFormat: (e, obj) => (process.env.NODE_ENV === 'production' ? omit(obj, 'stack') : obj),
   }),
 );
 app.use(loggerMiddleware());

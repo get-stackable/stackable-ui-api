@@ -40,8 +40,7 @@ const ContainerSchema = new mongoose.Schema(
   },
 );
 
-ContainerSchema.pre('save', async function(done) {
-  // eslint-disable-line
+ContainerSchema.pre('save', async function save(done) {
   // slugify slug on update
   if (this.isModified('name')) {
     this.slug = slugify(this.name);

@@ -21,13 +21,14 @@ const typeDefs = `
     listingOrder: Int
   }
 
+
   type Validations{
     between: Int
     min: Int
     max: Int
     type:String
     options:String
-  }
+}
 
   input ContainerFieldInput {
     name: String
@@ -54,7 +55,7 @@ const typeDefs = `
   }
 
   input ContainerName {
-    name: String
+    name: String!
   }
 
   # This type specifies the entry points into our API. In this case

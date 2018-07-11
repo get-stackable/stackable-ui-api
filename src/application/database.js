@@ -28,7 +28,7 @@ const ApplicationSchema = new mongoose.Schema(
   },
 );
 
-ApplicationSchema.pre('save', async function (done) { // eslint-disable-line
+ApplicationSchema.pre('save', async function save(done) {
   if (this.isModified('name')) {
     this.name = capitalize(this.name);
   }
