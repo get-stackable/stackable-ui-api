@@ -59,13 +59,13 @@ export default {
         createdBy: ctx.user.id,
         ...input,
       };
-
+      console.log(data);
       const application = new Application(data);
       await application.save();
 
       // add application to user
-      user.apps.push(application._id);
-      await user.save();
+      // user.apps.push(application._id);
+      // await user.save();
 
       if (libraryId) {
         await ApplicationLibrary.createLibraryData(application._id, libraryId);
@@ -153,11 +153,13 @@ export default {
 
       // clone app
       const data = {
-        name: args.name,
-        description: args.description,
+        name: args.input.name,
+        description: args.input.description,
         users: [ctx.user.id],
         createdBy: ctx.user.id,
       };
+
+      console.log(args);
 
       const appCopy = new Application(data);
       await appCopy.save();
@@ -253,7 +255,6 @@ export default {
       // remove user id from domain
       app.pull('users', user._id);
       await app.save();
-
       return app;
     },
   },

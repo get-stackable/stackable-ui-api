@@ -4,7 +4,7 @@ import { capitalize } from 'underscore.string';
 
 mongoose.Promise = global.Promise;
 
-export const ContainerItemSchema = new mongoose.Schema({
+export const ContainerFieldSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
@@ -29,7 +29,7 @@ const ContainerSchema = new mongoose.Schema(
     name: { type: String, trim: true, required: true },
     slug: { type: String, unique: true, index: true },
     app: { type: Schema.Types.ObjectId, ref: 'Application', required: true },
-    items: [ContainerItemSchema],
+    fields: [ContainerFieldSchema],
     isSingleItem: { type: Boolean, default: false },
   },
   {
@@ -40,13 +40,13 @@ const ContainerSchema = new mongoose.Schema(
   },
 );
 
-ContainerSchema.pre('save', async function(done) { // eslint-disable-line
+ContainerSchema.pre('save', async function(done) {
+  // eslint-disable-line
   // slugify slug on update
   if (this.isModified('name')) {
     this.slug = slugify(this.name);
     this.name = capitalize(this.name);
   }
-
   return done();
 });
 

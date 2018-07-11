@@ -6,7 +6,7 @@ const typeDefs = `
     isActive: Boolean
     publicKey: String
     privateKey: String
-    allowedUrls: String
+    allowedUrls: [String]
     createdBy: String
     users: String
   }
@@ -21,7 +21,7 @@ const typeDefs = `
   }
 
   input ApplicationInput {
-    name: String!
+    name: String
     description: String
     isActive: Boolean
     allowedUrls: String
@@ -29,7 +29,7 @@ const typeDefs = `
 
   # This type specifies the entry points into our API. In this case
   type Query {
-    application: Application    # returns a object of Application
+    application(id: ID! ): Application    # returns a object of Application
     allApplications: [Application]    # returns a array of Application
     allApplicationLibraries: [ApplicationLibrary]    # returns a array of ApplicationLibrary
   }
@@ -40,7 +40,7 @@ const typeDefs = `
     updateApplication(id: ID!, input: ApplicationInput!): Application
     deleteApplication(id: ID!): Application
     generateKeyApplication(id: ID!): Application
-    cloneApplication(id: ID!): Application
+    cloneApplication(id: ID!, input: ApplicationInput!): Application
     addUserApplication(appId: ID!, userEmail: String!): Application
     removeUserApplication(appId: ID!, userId: ID!): Application
   }
