@@ -64,8 +64,8 @@ export default {
       await application.save();
 
       // add application to user
-      user.apps.push(application._id);
-      await user.save();
+      // user.apps.push(application._id);
+      // await user.save();
 
       if (libraryId) {
         await ApplicationLibrary.createLibraryData(application._id, libraryId);

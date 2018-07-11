@@ -46,7 +46,6 @@ ContainerSchema.pre('save', async function save(done) {
     this.slug = slugify(this.name);
     this.name = capitalize(this.name);
   }
-
   return done();
 });
 

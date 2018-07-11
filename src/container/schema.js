@@ -13,39 +13,44 @@ const typeDefs = `
     id: ID!
     name: String
     slug: String
-    description: String  # TODO: Validation And Relation
+    description: String  # TODO: Validations And Relation
     type: String
     isRequired: Boolean
-    validation:Validation
+    validations:Validations
     isDisabled: Boolean
     listingOrder: Int
   }
 
-  type Validation{
+
+  type Validations{
     between: Int
     min: Int
     max: Int
-  }
+    type:String
+    options:String
+}
 
   input ContainerFieldInput {
     name: String
     slug: String
-    description: String  # TODO: Validation And Relation
+    description: String  # TODO:  Relation
     type: String
     isRequired: Boolean
     isDisabled: Boolean
-    validation:ValidationInput
+    validations:ValidationsInput
     listingOrder: Int
   }
 
-  input ValidationInput {
+  input ValidationsInput {
     between: Int
     min: Int
     max: Int
+    type:String
+    options:String
   }
 
   input ContainerInput {
-    name: String!
+    name: String
     fields: [ContainerFieldInput]
   }
 
