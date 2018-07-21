@@ -56,7 +56,7 @@ export default {
         throw new Error('You are not allowed to manage this app.');
       }
 
-      const items = await Item.find({ _id: item._id });
+      const items = await Item.findOne({ _id: item._id });
       return items;
     },
   },

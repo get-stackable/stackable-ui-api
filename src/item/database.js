@@ -16,12 +16,12 @@ const ItemSchema = new mongoose.Schema(
     },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     data: { type: Schema.Types.Mixed, required: true, index: true },
-    tags: { type: [String], default: [] },
+    // tags: { type: [String], default: [] },
   },
   {
     timestamps: {
       createdAt: 'createdAt',
-      updatedAt: 'updatedAt',
+      publishedAt: 'updatedAt',
     },
   },
 );

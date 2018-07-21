@@ -6,10 +6,8 @@ export const isAuthenticated = async (ctx, next) => {
   ctx.user = null;
 
   if (!ctx.header.authorization) {
-    console.log('header', ctx.header);
     return next();
   }
-  console.log('bjccbksdj', ctx.header);
   const token = ctx.header.authorization.substring(4);
   console.log('bjccbksdj', token);
   const data = await new Promise(resolve => {
