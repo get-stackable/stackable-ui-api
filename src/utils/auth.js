@@ -2,25 +2,16 @@ import jwt from 'jsonwebtoken';
 
 import conf from './config';
 
-const isDev = conf.get('env') === 'development';
-
 export const isAuthenticated = async (ctx, next) => {
   ctx.user = null;
-  // turn on auth for dev
-  if (isDev) {
-    ctx.user = {
-      id: '5ac3020c32731d0049176df6',
-      email: 'admin@admin.com',
-      isAdmin: true,
-    };
-    return next();
-  }
 
   if (!ctx.header.authorization) {
+    console.log('header', ctx.header);
     return next();
   }
-
+  console.log('bjccbksdj', ctx.header);
   const token = ctx.header.authorization.substring(4);
+  console.log('bjccbksdj', token);
   const data = await new Promise(resolve => {
     jwt.verify(token, conf.get('jwtSecret'), (err, decoded) => {
       if (err) {
