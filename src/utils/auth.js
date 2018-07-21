@@ -9,7 +9,6 @@ export const isAuthenticated = async (ctx, next) => {
     return next();
   }
   const token = ctx.header.authorization.substring(4);
-  console.log('bjccbksdj', token);
   const data = await new Promise(resolve => {
     jwt.verify(token, conf.get('jwtSecret'), (err, decoded) => {
       if (err) {
